@@ -1,11 +1,13 @@
+package container;
+
 /**
  * Created by nancy on 01.11.16.
  */
 public class generalContainer {
 
-    static Double bigramDef = -3.5;
-    static Double gapOpen = -4.;
-    static Double gapExtend = -1.;
+    public static Double bigramDef = -3.5;
+    public static Double gapOpen = -4.;
+    public static Double gapExtend = -1.;
     enum Dimension {TWO, THREE, FOUR}
     static Dimension dim = Dimension.TWO;
     enum AlnMode{NWA, SWA, NWAbi}
@@ -30,4 +32,5 @@ public class generalContainer {
             this.dim = Dimension.FOUR;
         }
     }
+
 }

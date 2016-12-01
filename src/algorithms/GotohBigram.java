@@ -1,4 +1,7 @@
+package algorithms;
+
 import java.util.ArrayList;
+import container.*;
 
 /**
  * Created by nancy on 23.11.16.
@@ -17,14 +20,17 @@ public class GotohBigram {
 
     private enum AlnCase{M, I, D}
 
+    /**
+     *
+     * @param dim1
+     * @param dim2
+     * @param alg
+     */
     public GotohBigram(int dim1, int dim2, Algebra alg){
 
         this.dim1 = dim1;
         this.dim2 = dim2;
 
-        this.match = new Double[dim1][dim2];
-        this.insert = new Double[dim1][dim2];
-        this.delete = new Double[dim1][dim2];
         this.algebra = alg;
         init();
 
@@ -39,9 +45,6 @@ public class GotohBigram {
         if (seq1.length() > this.dim1 || seq2.length() > this.dim2){
             this.dim1 = seq1.length();
             this.dim2 = seq2.length();
-            this.match = new Double[dim1][dim2];
-            this.insert = new Double[dim1][dim2];
-            this.delete = new Double[dim1][dim2];
             init();
         }
 
@@ -70,6 +73,10 @@ public class GotohBigram {
     }
 
     private void init(){
+        this.match = new Double[dim1][dim2];
+        this.insert = new Double[dim1][dim2];
+        this.delete = new Double[dim1][dim2];
+
         match[0][0] = 0.;
         delete[0][0]= -100000.;
         insert[0][0]= -100000.;

@@ -1,3 +1,5 @@
+package container;
+
 import java.util.HashMap;
 
 /**
@@ -7,7 +9,7 @@ public class Algebra {
     private HashMap<String, HashMap<String, Double> > scoreMapping;
     Double bigramDef;
 
-    Algebra(){
+    public Algebra(){
         this.scoreMapping = new HashMap<String, HashMap<String, Double> >();
         this.bigramDef = generalContainer.bigramDef;
     }
