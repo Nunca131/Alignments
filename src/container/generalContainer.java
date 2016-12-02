@@ -8,10 +8,10 @@ public class generalContainer {
     public static Double bigramDef = -3.5;
     public static Double gapOpen = -4.;
     public static Double gapExtend = -1.;
-    enum Dimension {TWO, THREE, FOUR}
-    static Dimension dim = Dimension.TWO;
-    enum AlnMode{NWA, SWA, NWAbi}
-    static AlnMode mode = AlnMode.NWAbi;
+    public enum Dimension {TWO, THREE, FOUR}
+    //public static Dimension dim = Dimension.TWO;
+    enum AlnMode{NWA, SWA, NWAbi, GotohBi}
+    static AlnMode mode = AlnMode.GotohBi;
 
     public void setBigramDef(Double bigramDef) {
         this.bigramDef = bigramDef;
@@ -21,16 +21,5 @@ public class generalContainer {
 
     public void setGapExtend(Double gapExtend) {this.gapExtend = gapExtend;}
 
-    public void setDim(int dim){
-        if (dim == 2) {
-            this.dim = Dimension.TWO;
-        }
-        else if(dim == 3) {
-            this.dim = Dimension.THREE;
-        }
-        else {
-            this.dim = Dimension.FOUR;
-        }
-    }
 
 }

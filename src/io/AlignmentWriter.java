@@ -42,14 +42,14 @@ public class AlignmentWriter {
      */
     public void write(String s){
         try {
-            writer.write(s);
+            writer.write(s+"\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * closes the output stream 
+     * closes the output stream
      */
     public void close(){
         try {
