@@ -24,19 +24,35 @@ public class WordListReader {
 
             int counter = 0;
 
+            String[] tokens = in.readLine().split(",");
+            int idCol = -1;
+            int wordCol = -1;
+            for (int i = 0; i < tokens.length; i++){
+                if (tokens[i].equals("id"))
+                    idCol = i;
+                if (tokens[i].equals("name"))
+                    wordCol = i;
+            }
+            String id = "";
+            String[] idSplit;
+            Float meaning;
+            String word = "";
             while (in.ready()) {
                 counter++;
-                String[] tokens = in.readLine().split("\t");
+                tokens = in.readLine().split(",");
                 //String wordID = tokens[0].trim();
-                String language = tokens[2].trim();
-                String meaning = tokens[1].trim();
-                String word = tokens[4].trim();
+                id = tokens[idCol];
+
+                idSplit = tokens[idCol].split("-");
+                meaning = Float.parseFloat(idSplit[0]+"."+idSplit[1]+idSplit[3]);
+
+                word = tokens[4].trim();
 
                 //remove spaces from word if there are any
                 word = word.replaceAll("\\s+","");
 
                 //adds meaning and language to database
-                database.addEntry(meaning, word, language);
+                database.addEntry(id, meaning, word);
             }
 
             in.close();

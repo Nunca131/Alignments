@@ -56,11 +56,11 @@ public class GotohBigram {
     }
 
     /**
-     * aligns two sequences in Gotoh style based on their bigramsich
+     * aligns two sequences in Gotoh style based on their bigrams
      * @param id1 wordID of first sequence
      * @param id2 wordID of second sequence
      */
-    public void align(int id1, int id2){
+    public void align(String id1, String id2){
         String seq1 = "^" + this.wordDatabase.getWord(id1) + "$";
         String seq2 = "^" + this.wordDatabase.getWord(id2) + "$";
 
@@ -71,15 +71,12 @@ public class GotohBigram {
         }
 
         calcScores(seq1, seq2);
-        matrixToString(match, seq1.length(), seq2.length());
+        /*matrixToString(match, seq1.length(), seq2.length());
         System.out.println();
         matrixToString(insert, seq1.length(), seq2.length());
         System.out.println();
-        matrixToString(delete, seq1.length(), seq2.length());
-        System.out.println("bla");
-
+        matrixToString(delete, seq1.length(), seq2.length());*/
         backtracking(seq1, seq2);
-        System.out.println("blubb");
         createAlnLines(id1, id2);
     }
 
@@ -307,7 +304,7 @@ public class GotohBigram {
                 }
             }
             else{
-                System.err.println("backtracking failed");
+                System.err.println("backtracking failed! Please sent a mail to nancy@bioinf.uni-leipzig.de with your input data.");
                 return;
             }
 
@@ -322,29 +319,32 @@ public class GotohBigram {
             System.err.println("Backtracking did not end in Match");
     }
 
-    private void createAlnLines(int id1, int id2){
-        String out = "IDS: " + id2 + " " + id2 + " Score " + alnScore + " NScore " +
-                ((double)Math.round((alnScore*100)/scores.size()))/100 + " Word1 " +
+    private void createAlnLines(String id1, String id2){
+        //line of all formal information
+        String out = "IDS: " + id2 + " " + id2 + " Score " + ((double)Math.round(alnScore*100))/100 +
+                " NScore " + ((double)Math.round((alnScore*100)/scores.size()))/100 + " Word1 " +
                 this.wordDatabase.getWord(id1) + " Word2 " + this.wordDatabase.getWord(id2);
         writer.write(out);
-        System.out.println(out);
 
+        //line of first aligned sequence
         out = "";
         for (int a = aln1Seq.size()-1; a >= 0; a--){
             out += "    " + aln1Seq.get(a);
         }
         writer.write(out);
-        System.out.println(out);
 
+        //line of second aligned sequence
         out = "";
         for (int a = aln2Seq.size()-1; a >= 0; a--){
             out +="    " + aln2Seq.get(a);
         }
         writer.write(out);
-        System.out.println(out);
 
+        //score line
+        double summedScores = 0.;
         out ="    ";
         for (int b = scores.size()-1; b >= 0; b--){
+            summedScores += scores.get(b);
             if (scores.get(b) > 0)
                 out += "  " + scores.get(b);
             else
@@ -353,7 +353,7 @@ public class GotohBigram {
         }
         writer.write(out);
         writer.write("");
-        System.out.println(out);
-
+        if(Math.round(summedScores*100) != Math.round(alnScore*100))
+            System.err.println("Score does not match: " + id1 + " " + id2);
     }
 }
