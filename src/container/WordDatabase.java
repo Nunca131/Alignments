@@ -52,13 +52,24 @@ public class WordDatabase {
     }
 
     /**
-     * return the word for a given wordID
+     * returns the word for a given wordID
+     *
      * @param wordID ID of the word (int) whose meaning is asked for
      * @return actual word (String)
      */
-    public String getWord(String wordID){
+    public String getWordByID(String wordID){
         int pos = id.indexOf(wordID);
         return words.get(pos);
+    }
+
+    /**
+     * returns the word at the given position
+     *
+     * @param pos position of the word
+     * @return actual word
+     */
+    public String getWordByPos(int pos){
+        return this.words.get(pos);
     }
 
     /**
@@ -80,6 +91,47 @@ public class WordDatabase {
         float meaning2 = getMeaning(id2);
 
         return (Math.round(meaning1*1000) == Math.round(meaning2*1000));
+    }
+
+    /**
+     * returns all meaning entries for one language
+     *
+     * @return meanings
+     */
+    public ArrayList<Float> getAllMeaning(){
+        return this.meaning;
+    }
+
+    /**
+     * checks whether meaning list contains a special meaning
+     *
+     * @param meaning meaning in question as float
+     * @return true if meaning is in the list, else false
+     */
+    public boolean hasMeaning(float meaning){
+        return this.meaning.indexOf(meaning) >-1;
+    }
+
+    /**
+     * returns the list of words of a certain meaning
+     *
+     * @param meaning
+     * @return array list of words
+     */
+    public ArrayList<String> getWordsForMeaning(float meaning){
+        ArrayList<String> wordsOfThisMeaning = new ArrayList<>();
+        int firstPos = this.meaning.indexOf(meaning);
+        wordsOfThisMeaning.add(this.words.get(firstPos));
+
+        //in theory, the list should be sorted by meanings (for the IDS database at least)
+        while(firstPos < this.meaning.lastIndexOf(meaning)){
+            firstPos++;
+            if (this.meaning.get(firstPos) == meaning){
+                wordsOfThisMeaning.add(this.words.get(firstPos));
+            }
+        }
+
+        return wordsOfThisMeaning;
     }
 
 }
