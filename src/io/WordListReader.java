@@ -28,19 +28,27 @@ public class WordListReader {
             int idCol = -1;
             int wordCol = -1;
             for (int i = 0; i < tokens.length; i++){
-                if (tokens[i].equals("id"))
+                if (tokens[i].trim().equals("id"))
                     idCol = i;
-                if (tokens[i].equals("name"))
+                if (tokens[i].trim().equals("name"))
                     wordCol = i;
             }
+
+            if (idCol == -1 || wordCol == -1){
+                System.err.println("Please make sure \"id\" and \"name\" show up in the file " + filename);
+                return;
+            }
+
+            String line = "";
             String id = "";
             String[] idSplit;
             Float meaning;
             String word = "";
             while (in.ready()) {
                 counter++;
-                tokens = in.readLine().split(",");
-                //String wordID = tokens[0].trim();
+                line = in.readLine();
+                tokens = line.split(",");
+
                 id = tokens[idCol];
 
                 idSplit = tokens[idCol].split("-");

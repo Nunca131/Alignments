@@ -3,6 +3,7 @@ package algorithms;
 import java.util.ArrayList;
 import container.*;
 import io.AlignmentWriter;
+import io.WordListReader;
 
 /**
  * Created by nancy on 23.11.16.
@@ -16,7 +17,8 @@ public class GotohBigram {
     private int dim1;
     private int dim2;
 
-    private WordDatabase wordDatabase;
+    private WordDatabase wordDatabase1;
+    private WordDatabase wordDatabase2;
 
     private ArrayList<Double> maxList;
 
@@ -36,8 +38,13 @@ public class GotohBigram {
      * @param dim1 length of x-axis of first alignment matrix allocation
      * @param dim2 length of y-axis of first alignment matrix allocation
      * @param alg algebra that contains alignment scores
+     * @param wordDatabase1 contains all words, their IDs, and meanings of first language
+     * @param wordDatabase2 contains all words, their IDs, and meanings of second language
+     * @param writer open Stream for alignment output
      */
-    public GotohBigram(int dim1, int dim2, Algebra alg, WordDatabase wordDatabase, AlignmentWriter writer){
+    public GotohBigram(int dim1, int dim2, Algebra alg,
+                       WordDatabase wordDatabase1, WordDatabase wordDatabase2,
+                       AlignmentWriter writer){
 
 
 
@@ -49,7 +56,8 @@ public class GotohBigram {
 
         this.maxList = new ArrayList<>();
 
-        this.wordDatabase = wordDatabase;
+        this.wordDatabase1 = wordDatabase1;
+        this.wordDatabase2 = wordDatabase2;
 
         this.writer = writer;
 
@@ -57,12 +65,12 @@ public class GotohBigram {
 
     /**
      * aligns two sequences in Gotoh style based on their bigrams
-     * @param id1 wordID of first sequence
-     * @param id2 wordID of second sequence
+     * @param id1 wordID of first sequence in first database
+     * @param id2 wordID of second sequence in second database
      */
     public void align(String id1, String id2){
-        String seq1 = "^" + this.wordDatabase.getWord(id1) + "$";
-        String seq2 = "^" + this.wordDatabase.getWord(id2) + "$";
+        String seq1 = "^" + this.wordDatabase1.getWord(id1) + "$";
+        String seq2 = "^" + this.wordDatabase2.getWord(id2) + "$";
 
         if (seq1.length() > this.dim1 || seq2.length() > this.dim2){
             this.dim1 = seq1.length();
@@ -71,6 +79,7 @@ public class GotohBigram {
         }
 
         calcScores(seq1, seq2);
+        //for checking the matrices on cmd line (will not be shown in alignment file)
         /*matrixToString(match, seq1.length(), seq2.length());
         System.out.println();
         matrixToString(insert, seq1.length(), seq2.length());
@@ -323,7 +332,7 @@ public class GotohBigram {
         //line of all formal information
         String out = "IDS: " + id2 + " " + id2 + " Score " + ((double)Math.round(alnScore*100))/100 +
                 " NScore " + ((double)Math.round((alnScore*100)/scores.size()))/100 + " Word1 " +
-                this.wordDatabase.getWord(id1) + " Word2 " + this.wordDatabase.getWord(id2);
+                this.wordDatabase1.getWord(id1) + " Word2 " + this.wordDatabase2.getWord(id2);
         writer.write(out);
 
         //line of first aligned sequence
