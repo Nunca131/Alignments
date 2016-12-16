@@ -54,7 +54,7 @@ public class WordListReader {
                 idSplit = tokens[idCol].split("-");
                 meaning = Float.parseFloat(idSplit[0]+"."+idSplit[1]+idSplit[3]);
 
-                word = tokens[4].trim();
+                word = tokens[wordCol].trim();
 
                 //remove spaces from word if there are any
                 word = word.replaceAll("\\s+","");
