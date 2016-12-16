@@ -47,7 +47,8 @@ public class Align_Main {
         // NeedlemanWunsch nwa = new NeedlemanWunsch(seqs, alg);
         for (int i = 0; i < data.size()-1; i++){
             GotohBigram gotohBi = new GotohBigram(30, 30, alg, data.get(i), data.get(i+1), writer);
-            //TODO: start alignment (gotohBi.align(id1, id2)) for all words of same meaning
+            CreateWordPairs pairs = new CreateWordPairs(gotohBi);
+            pairs.createPairs(data.get(i), data.get(i+1));
         }
 
 

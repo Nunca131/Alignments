@@ -69,8 +69,9 @@ public class GotohBigram {
      * @param id2 wordID of second sequence in second database
      */
     public void align(String id1, String id2){
-        String seq1 = "^" + this.wordDatabase1.getWord(id1) + "$";
-        String seq2 = "^" + this.wordDatabase2.getWord(id2) + "$";
+        String seq1 = "^" + this.wordDatabase1.getWordByID(id1) + "$";
+        String seq2 = "^" + this.wordDatabase2.getWordByID(id2) + "$";
+        //System.out.println(seq1 + " " + seq2);
 
         if (seq1.length() > this.dim1 || seq2.length() > this.dim2){
             this.dim1 = seq1.length();
@@ -86,6 +87,7 @@ public class GotohBigram {
         System.out.println();
         matrixToString(delete, seq1.length(), seq2.length());*/
         backtracking(seq1, seq2);
+        System.out.println(id1 + " " + id2);
         createAlnLines(id1, id2);
     }
 
@@ -198,6 +200,10 @@ public class GotohBigram {
      * @param seq2 second input sequence
      */
     private void backtracking(String seq1, String seq2){
+        aln1Seq.clear();
+        aln2Seq.clear();
+        scores.clear();
+
         AlnCase alnCase = AlnCase.M;
 
         String lastChar1 = "";
@@ -222,7 +228,7 @@ public class GotohBigram {
         if (insert[i][j] > delete[i][j] && insert[i][j] > match[i][j]){
             alnCase = AlnCase.I;
             alnScore = insert[i][j];
-            lastChar1 = "&";
+            lastChar1 = "-";
             lastChar2 = seq2.substring(j);
         }
 
@@ -234,7 +240,7 @@ public class GotohBigram {
             if(i > 0 && j > 0){
                 switch (alnCase){
                     case M:
-                       if (this.match[i][j] == this.delete[i-1][j-1] + this.algebra.getScore(
+                        if (this.match[i][j] == this.delete[i-1][j-1] + this.algebra.getScore(
                                 seq1.substring(i-1, i)+lastChar1, "-"+lastChar2)){
                             alnCase = AlnCase.D;
                             this.scores.add(this.algebra.getScore(
@@ -251,11 +257,15 @@ public class GotohBigram {
                             lastChar2 = seq2.substring(j-1, j);
                         }
                         //else if? in that way errors could be caught here...
-                        else {
+                        else if (this.match[i][j] == this.match[i-1][j-1] + this.algebra.getScore(
+                               seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2)){
                             this.scores.add(this.algebra.getScore(
                                     seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2));
                             lastChar1 = seq1.substring(i-1, i);
                             lastChar2 = seq2.substring(j-1, j);
+                        }
+                        else{
+                            System.err.println("Could not find right matching case");
                         }
                         i = i-1;
                         j = j-1;
@@ -277,11 +287,15 @@ public class GotohBigram {
                             lastChar1 = seq1.substring(i, i+1);
                             lastChar2 = "-";
                         }
-                        else {
+                        else if (this.insert[i][j] == this.insert[i][j-1] + this.algebra.getScore(
+                                "-"+lastChar1, seq2.substring(j-1, j) + lastChar2)){
                             this.scores.add(this.algebra.getScore(
                                     "-"+lastChar1, seq2.substring(j-1, j)+lastChar2));
                             lastChar1 = "-";
                             lastChar2 = seq2.substring(j-1, j);
+                        }
+                        else{
+                            System.err.println("Could not find right insertion case");
                         }
                         j = j - 1;
                         break;
@@ -302,15 +316,45 @@ public class GotohBigram {
                             lastChar1 = "-";
                             lastChar2 = seq2.substring(j, j+1);
                         }
-                        else {
+                        else if (this.delete[i][j] == this.delete[i-1][j] + this.algebra.getScore(
+                                seq1.substring(i-1, i)+lastChar1, "-"+lastChar2)){
                             this.scores.add(this.algebra.getScore(
                                     seq1.substring(i-1, i)+lastChar1, "-"+lastChar2));
                             lastChar1 = seq1.substring(i-1, i);
                             lastChar2 = "-";
                         }
+                        else{
+                            System.err.println("Could not find right deletion case");
+                        }
                         i = i - 1;
                         break;
                 }
+            }
+            else if (i > 0 && j == 0){
+                if (i == 1){
+                    this.scores.add(this.algebra.getScore(
+                            seq1.substring(i-1, i)+lastChar1, "^"+lastChar2));
+                }
+                else {
+                    this.scores.add(this.algebra.getScore(
+                            seq1.substring(i - 1, i) + lastChar1, "-" + lastChar2));
+                }
+                lastChar1 = seq1.substring(i-1, i);
+                lastChar2 = "-";
+                i = i - 1;
+            }
+            else if (j > 0 && i == 0){
+                if (j == 1){
+                    this.scores.add(this.algebra.getScore(
+                            "^"+lastChar1, seq2.substring(j-1, j)+lastChar2));
+                }
+                else {
+                    this.scores.add(this.algebra.getScore(
+                            "-" + lastChar1, seq2.substring(j - 1, j) + lastChar2));
+                }
+                lastChar1 = "-";
+                lastChar2 = seq2.substring(j-1, j);
+                j = j - 1;
             }
             else{
                 System.err.println("backtracking failed! Please sent a mail to nancy@bioinf.uni-leipzig.de with your input data.");
@@ -320,19 +364,15 @@ public class GotohBigram {
            // System.out.println(lastChar1 + " " + lastChar2);
         }
 
-        if (alnCase.equals(AlnCase.M)){
-            this.aln1Seq.add("^");
-            this.aln2Seq.add("^");
-        }
-        else
-            System.err.println("Backtracking did not end in Match");
+        this.aln1Seq.add("^");
+        this.aln2Seq.add("^");
     }
 
     private void createAlnLines(String id1, String id2){
         //line of all formal information
-        String out = "IDS: " + id2 + " " + id2 + " Score " + ((double)Math.round(alnScore*100))/100 +
+        String out = "IDS: " + id1 + " " + id2 + " Score " + ((double)Math.round(alnScore*100))/100 +
                 " NScore " + ((double)Math.round((alnScore*100)/scores.size()))/100 + " Word1 " +
-                this.wordDatabase1.getWord(id1) + " Word2 " + this.wordDatabase2.getWord(id2);
+                this.wordDatabase1.getWordByID(id1) + " Word2 " + this.wordDatabase2.getWordByID(id2);
         writer.write(out);
 
         //line of first aligned sequence
@@ -362,7 +402,10 @@ public class GotohBigram {
         }
         writer.write(out);
         writer.write("");
-        if(Math.round(summedScores*100) != Math.round(alnScore*100))
+        if(Math.round(summedScores*100) != Math.round(alnScore*100)) {
             System.err.println("Score does not match: " + id1 + " " + id2);
+            writer.close();
+            System.exit(1);
+        }
     }
 }

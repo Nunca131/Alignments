@@ -52,9 +52,10 @@ public class WordListReader {
                 id = tokens[idCol];
 
                 idSplit = tokens[idCol].split("-");
-                meaning = Float.parseFloat(idSplit[0]+"."+idSplit[1]+idSplit[3]);
+                meaning = Float.parseFloat(idSplit[0]+"."+idSplit[1]);
 
                 word = tokens[wordCol].trim();
+                word = word.replaceAll("-", "");
 
                 //remove spaces from word if there are any
                 word = word.replaceAll("\\s+","");

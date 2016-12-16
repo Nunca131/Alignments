@@ -68,8 +68,8 @@ public class WordDatabase {
      * @param pos position of the word
      * @return actual word
      */
-    public String getWordByPos(int pos){
-        return this.words.get(pos);
+    public String getIDByPos(int pos){
+        return this.id.get(pos);
     }
 
     /**
@@ -118,16 +118,16 @@ public class WordDatabase {
      * @param meaning
      * @return array list of words
      */
-    public ArrayList<String> getWordsForMeaning(float meaning){
+    public ArrayList<String> getIDsForMeaning(float meaning){
         ArrayList<String> wordsOfThisMeaning = new ArrayList<>();
         int firstPos = this.meaning.indexOf(meaning);
-        wordsOfThisMeaning.add(this.words.get(firstPos));
+        wordsOfThisMeaning.add(this.id.get(firstPos));
 
         //in theory, the list should be sorted by meanings (for the IDS database at least)
         while(firstPos < this.meaning.lastIndexOf(meaning)){
             firstPos++;
             if (this.meaning.get(firstPos) == meaning){
-                wordsOfThisMeaning.add(this.words.get(firstPos));
+                wordsOfThisMeaning.add(this.id.get(firstPos));
             }
         }
 

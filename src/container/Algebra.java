@@ -49,7 +49,7 @@ public class Algebra {
                     return scoreMapping.get(ngram1).get(ngram2);
             }
 
-            else if(ngram1.equals("--") || ngram2.equals("--"))
+            if(ngram1.equals("--") || ngram2.equals("--"))
                 return generalContainer.gapExtend;
             else if (ngram1.substring(ngram1.length()-1).equals("-") || ngram2.substring(ngram2.length()-1).equals("-"))
                     return generalContainer.gapOpen;
