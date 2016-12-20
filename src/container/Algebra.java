@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class Algebra {
     private HashMap<String, HashMap<String, Double> > scoreMapping;
     Double bigramDef;
+    int size;
 
     public Algebra(){
         this.scoreMapping = new HashMap<String, HashMap<String, Double> >();
@@ -15,6 +16,7 @@ public class Algebra {
     }
 
     public void fill(String ngram1, String ngram2, Double logOddScore){
+        size++;
         HashMap<String, Double> scoreMap = scoreMapping.get(ngram1);
         if(scoreMap != null)
             scoreMapping.get(ngram1).put(ngram2, logOddScore);
@@ -67,5 +69,9 @@ public class Algebra {
     public double getScore(String ngram1, String ngram2, String ngram3, String ngram4){
         return getScore(ngram1, ngram2) + getScore(ngram1, ngram3) + getScore(ngram1, ngram4) +
                 getScore(ngram2, ngram3) + getScore(ngram2, ngram4) + getScore(ngram3, ngram4);
+    }
+
+    public int getSize(){
+        return this.size;
     }
 }

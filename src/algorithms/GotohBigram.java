@@ -81,11 +81,11 @@ public class GotohBigram {
 
         calcScores(seq1, seq2);
         //for checking the matrices on cmd line (will not be shown in alignment file)
-        /*matrixToString(match, seq1.length(), seq2.length());
+        matrixToString(match, seq1.length(), seq2.length());
         System.out.println();
         matrixToString(insert, seq1.length(), seq2.length());
         System.out.println();
-        matrixToString(delete, seq1.length(), seq2.length());*/
+        matrixToString(delete, seq1.length(), seq2.length());
         backtracking(seq1, seq2);
         System.out.println(id1 + " " + id2);
         createAlnLines(id1, id2);
@@ -295,7 +295,8 @@ public class GotohBigram {
                             lastChar2 = seq2.substring(j-1, j);
                         }
                         else{
-                            System.err.println("Could not find right insertion case");
+                            System.err.println("Could not find right insertion case: " + lastChar1 + " " + lastChar2 +
+                            " " + alnCase.toString());
                         }
                         j = j - 1;
                         break;
@@ -324,7 +325,8 @@ public class GotohBigram {
                             lastChar2 = "-";
                         }
                         else{
-                            System.err.println("Could not find right deletion case");
+                            System.err.println("Could not find right deletion case: " + lastChar1 + " " + lastChar2 +
+                            " " + alnCase.toString());
                         }
                         i = i - 1;
                         break;
@@ -395,17 +397,15 @@ public class GotohBigram {
         for (int b = scores.size()-1; b >= 0; b--){
             summedScores += scores.get(b);
             if (scores.get(b) > 0)
-                out += "  " + scores.get(b);
+                out += "  " + scores.get(b);//(double)Math.round(scores.get(b)*10)/10;
             else
-                out += " " + scores.get(b);
+                out += " " + scores.get(b);//(double)Math.round(scores.get(b)*10)/10;
             //TODO: check whether alnScore is sum of scores(i) careful with top/floor calc
         }
         writer.write(out);
         writer.write("");
         if(Math.round(summedScores*100) != Math.round(alnScore*100)) {
             System.err.println("Score does not match: " + id1 + " " + id2);
-            writer.close();
-            System.exit(1);
         }
     }
 }
