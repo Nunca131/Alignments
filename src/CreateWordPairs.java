@@ -18,14 +18,13 @@ public class CreateWordPairs {
 
         ArrayList<Float> meanings1 = database1.getAllMeaning();
 
-        ArrayList<String> wordsFromSecondLang = new ArrayList<>();
+        ArrayList<String> iDsFromSecondLang;
 
         for (int i = 0; i < meanings1.size(); i++){
             if (database2.hasMeaning(meanings1.get(i))){
-                wordsFromSecondLang = database1.getWordsForMeaning(meanings1.get(i));
-
-                for (String word :wordsFromSecondLang) {
-                    gotohBigram.align(database1.getWordByPos(i), word);
+                iDsFromSecondLang = database2 .getIDsForMeaning(meanings1.get(i));
+                for (String iD :iDsFromSecondLang) {
+                    gotohBigram.align(database1.getIDByPos(i), iD);
                 }
             }
         }

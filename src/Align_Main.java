@@ -1,6 +1,7 @@
 import algorithms.GotohBigram;
 import container.WordDatabase;
 import io.AlignmentWriter;
+import io.ScoreReader;
 import io.WordListReader;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class Align_Main {
 
         container.Algebra alg = new container.Algebra();
         container.generalContainer container = new container.generalContainer();
-        alg.fill("A", "A", 2.);
+        /*alg.fill("A", "A", 2.);
         alg.fill("T", "T", 2.);
         alg.fill("G", "G", 2.);
         alg.fill("C", "C", 2.);
@@ -25,8 +26,10 @@ public class Align_Main {
         alg.fill("pa", "pa", 2.);
         alg.fill("pa", "pe", 1.);
         alg.fill("a$", "e$", 1.5);
-        alg.fill("pp","-p", 1.);
+        alg.fill("pp","-p", 1.);*/
 
+        ScoreReader reader = new ScoreReader("Por_Spa_800_bi.los", alg);
+        System.out.println(alg.getSize());
         ArrayList<WordDatabase> data = new ArrayList<>();
 
         for (String filename: args ) {

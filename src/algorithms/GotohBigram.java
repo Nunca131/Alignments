@@ -52,7 +52,6 @@ public class GotohBigram {
         this.dim2 = dim2;
 
         this.algebra = alg;
-        init();
 
         this.maxList = new ArrayList<>();
 
@@ -76,18 +75,19 @@ public class GotohBigram {
         if (seq1.length() > this.dim1 || seq2.length() > this.dim2){
             this.dim1 = seq1.length();
             this.dim2 = seq2.length();
-            init();
         }
+
+        init(seq1, seq2);
 
         calcScores(seq1, seq2);
         //for checking the matrices on cmd line (will not be shown in alignment file)
-        matrixToString(match, seq1.length(), seq2.length());
+        /*matrixToString(match, seq1.length(), seq2.length());
         System.out.println();
         matrixToString(insert, seq1.length(), seq2.length());
         System.out.println();
-        matrixToString(delete, seq1.length(), seq2.length());
+        matrixToString(delete, seq1.length(), seq2.length());*/
         backtracking(seq1, seq2);
-        System.out.println(id1 + " " + id2);
+        //System.out.println(id1 + " " + id2);
         createAlnLines(id1, id2);
     }
 
@@ -110,7 +110,7 @@ public class GotohBigram {
         return max;
     }
 
-    private void init(){
+    private void init(String seq1, String seq2){
         this.match = new Double[dim1][dim2];
         this.insert = new Double[dim1][dim2];
         this.delete = new Double[dim1][dim2];
@@ -119,22 +119,24 @@ public class GotohBigram {
         delete[0][0]= -100000.;
         insert[0][0]= -100000.;
 
-        for(int i = 1; i < this.dim1; i++){
+        for(int i = 1; i < seq1.length(); i++){
             match[i][0] = -100000.;
             insert[i][0] = -100000.;
+            //TODO: calc actual scores!!!
             if (i > 1)
-                delete[i][0] = delete[i-1][0] + generalContainer.gapExtend;
+                delete[i][0] = delete[i-1][0] + algebra.getScore(seq1.substring(i-1, i+1), "--");
             else
-                delete[i][0] = generalContainer.gapOpen;
+                delete[i][0] = algebra.getScore(seq1.substring(i-1, i+1), "^-");
         }
 
-        for (int j = 1; j < this.dim2; j++){
+        for (int j = 1; j < seq2.length(); j++){
             match[0][j] = -100000.;
             delete[0][j] = -100000.;
+            //TODO: calc actual scores!!!
             if (j > 1)
-                insert[0][j] = insert[0][j-1] + generalContainer.gapExtend;
+                insert[0][j] = insert[0][j-1] + algebra.getScore("--", seq2.substring(j-1, j+1));
             else
-                insert[0][j] = generalContainer.gapOpen;
+                insert[0][j] = algebra.getScore("^-", seq2.substring(j-1, j+1));
         }
     }
 
@@ -243,6 +245,8 @@ public class GotohBigram {
                         if (this.match[i][j] == this.delete[i-1][j-1] + this.algebra.getScore(
                                 seq1.substring(i-1, i)+lastChar1, "-"+lastChar2)){
                             alnCase = AlnCase.D;
+                            //System.out.println(alnCase.toString() + " " + seq1.substring(i-1, i)+lastChar1 +" " +  "-"+lastChar2 +
+                            //        " " + this.algebra.getScore(seq1.substring(i-1, i)+lastChar1, "-"+lastChar2));
                             this.scores.add(this.algebra.getScore(
                                     seq1.substring(i-1, i)+lastChar1, "-"+lastChar2));
                             lastChar1 = seq1.substring(i-1, i);
@@ -251,6 +255,8 @@ public class GotohBigram {
                         else if (this.match[i][j] == this.insert[i-1][j-1] + this.algebra.getScore(
                                 "-"+lastChar1, seq2.substring(j-1, j)+lastChar2)){
                             alnCase = AlnCase.I;
+                            //System.out.println(alnCase.toString() + " " + "-"+lastChar1 + " " + seq2.substring(j-1, j)+lastChar2
+                            //                + " " + this.algebra.getScore("-"+lastChar1, seq2.substring(j-1, j)+lastChar2));
                             this.scores.add(this.algebra.getScore(
                                     "-"+lastChar1, seq2.substring(j-1, j)+lastChar2));
                             lastChar1 = "-";
@@ -259,6 +265,8 @@ public class GotohBigram {
                         //else if? in that way errors could be caught here...
                         else if (this.match[i][j] == this.match[i-1][j-1] + this.algebra.getScore(
                                seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2)){
+                            //System.out.println(alnCase.toString() + " " + seq1.substring(i-1, i)+lastChar1 + " " + seq2.substring(j-1, j)+lastChar2
+                            //+ " " + this.algebra.getScore(seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2));
                             this.scores.add(this.algebra.getScore(
                                     seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2));
                             lastChar1 = seq1.substring(i-1, i);
@@ -272,16 +280,20 @@ public class GotohBigram {
                         break;
                     case I:
                         if (this.insert[i][j] == this.match[i][j-1] + this.algebra.getScore(
-                                seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j) + lastChar2)){
+                                seq1.substring(i, i+1)+lastChar1, seq2.substring(j-1, j) + lastChar2)){
                             alnCase = AlnCase.M;
+                            //System.out.println(alnCase.toString() + " " + seq1.substring(i-1, i)+lastChar1+" " + seq2.substring(j-1, j) + lastChar2
+                            //+ " " + this.algebra.getScore(seq1.substring(i, i+1)+lastChar1, seq2.substring(j-1, j) + lastChar2));
                             this.scores.add(this.algebra.getScore(
-                                    seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2));
+                                    seq1.substring(i, i+1)+lastChar1, seq2.substring(j-1, j)+lastChar2));
                             lastChar1 = seq1.substring(i, i+1);
                             lastChar2 = seq2.substring(j-1, j);
                         }
                         else if (this.insert[i][j] == this.delete[i][j-1] + this.algebra.getScore(
                                 seq1.substring(i-1, i)+lastChar1, "-" + lastChar2)){
                             alnCase = AlnCase.D;
+                            //System.out.println(alnCase.toString() + " " + seq1.substring(i-1, i)+lastChar1 + " -" + lastChar2
+                            //+" "+this.algebra.getScore(seq1.substring(i-1, i)+lastChar1, "-" + lastChar2));
                             this.scores.add(this.algebra.getScore(
                                     seq1.substring(i-1, i)+lastChar1, "-"+lastChar2));
                             lastChar1 = seq1.substring(i, i+1);
@@ -291,21 +303,26 @@ public class GotohBigram {
                                 "-"+lastChar1, seq2.substring(j-1, j) + lastChar2)){
                             this.scores.add(this.algebra.getScore(
                                     "-"+lastChar1, seq2.substring(j-1, j)+lastChar2));
+                            //System.out.println(alnCase.toString()+" "+"-"+lastChar1+" "+ seq2.substring(j-1, j)+lastChar2
+                            //+" "+this.algebra.getScore("-"+lastChar1, seq2.substring(j-1, j) + lastChar2));
                             lastChar1 = "-";
                             lastChar2 = seq2.substring(j-1, j);
                         }
                         else{
                             System.err.println("Could not find right insertion case: " + lastChar1 + " " + lastChar2 +
                             " " + alnCase.toString());
+                            //System.out.println(seq1.substring(i, i+1)+lastChar1+" "+ seq2.substring(j-1, j) + lastChar2);
                         }
                         j = j - 1;
                         break;
                     case D:
                         if (this.delete[i][j] == this.match[i-1][j] + this.algebra.getScore(
-                                seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2)) {
+                                seq1.substring(i-1, i)+lastChar1, seq2.substring(j, j+1)+lastChar2)) {
                             alnCase = AlnCase.M;
+                            //System.out.println(alnCase.toString()+" "+seq1.substring(i-1, i)+lastChar1+" "+ seq2.substring(j, j+1)+lastChar2
+                            //+" "+this.algebra.getScore(seq1.substring(i-1, i)+lastChar1, seq2.substring(j, j+1)+lastChar2));
                             this.scores.add(this.algebra.getScore(
-                                    seq1.substring(i-1, i)+lastChar1, seq2.substring(j-1, j)+lastChar2));
+                                    seq1.substring(i-1, i)+lastChar1, seq2.substring(j, j+1)+lastChar2));
                             lastChar1 = seq1.substring(i-1, i);
                             lastChar2 = seq2.substring(j, j+1);
                         }
@@ -319,6 +336,8 @@ public class GotohBigram {
                         }
                         else if (this.delete[i][j] == this.delete[i-1][j] + this.algebra.getScore(
                                 seq1.substring(i-1, i)+lastChar1, "-"+lastChar2)){
+                            //System.out.println(alnCase.toString()+" "+seq1.substring(i-1, i)+lastChar1+ " -"+lastChar2
+                            //+" "+this.algebra.getScore(seq1.substring(i-1, i)+lastChar1, "-"+lastChar2));
                             this.scores.add(this.algebra.getScore(
                                     seq1.substring(i-1, i)+lastChar1, "-"+lastChar2));
                             lastChar1 = seq1.substring(i-1, i);
@@ -327,6 +346,8 @@ public class GotohBigram {
                         else{
                             System.err.println("Could not find right deletion case: " + lastChar1 + " " + lastChar2 +
                             " " + alnCase.toString());
+                            //System.out.println(seq1.substring(i-1, i)+lastChar1+" "+ seq2.substring(j, j+1)+lastChar2+ " " +this.algebra.getScore(
+                            //seq1.substring(i-1, i)+lastChar1, seq2.substring(j, j+1)+lastChar2));
                         }
                         i = i - 1;
                         break;
@@ -404,7 +425,8 @@ public class GotohBigram {
         }
         writer.write(out);
         writer.write("");
-        if(Math.round(summedScores*100) != Math.round(alnScore*100)) {
+        //System.out.println(summedScores +" "+ alnScore);
+        if(summedScores != alnScore) {
             System.err.println("Score does not match: " + id1 + " " + id2);
         }
     }
