@@ -28,7 +28,7 @@ public class Algebra {
     }
 
     public double getScore(String ngram1, String ngram2){
-        if(generalContainer.mode.equals(generalContainer.AlnMode.NWA)) {
+        if(generalContainer.alnMode.equals(generalContainer.AlnMode.NWA)) {
             if (scoreMapping.containsKey(ngram1)) {
                 if (scoreMapping.get(ngram1).containsKey(ngram2))
                     return scoreMapping.get(ngram1).get(ngram2);
@@ -45,7 +45,7 @@ public class Algebra {
                     return this.bigramDef;
             }
         }
-        else if (generalContainer.mode.equals(generalContainer.AlnMode.GotohBi)){
+        else if (generalContainer.alnMode.equals(generalContainer.AlnMode.GotohBi)){
             if(scoreMapping.containsKey(ngram1)) {
                 if (scoreMapping.get(ngram1).containsKey(ngram2))
                     return scoreMapping.get(ngram1).get(ngram2);

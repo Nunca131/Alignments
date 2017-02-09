@@ -11,7 +11,12 @@ public class generalContainer {
     public enum Dimension {TWO, THREE, FOUR}
     //public static Dimension dim = Dimension.TWO;
     enum AlnMode{NWA, SWA, NWAbi, GotohBi}
-    static AlnMode mode = AlnMode.GotohBi;
+    static AlnMode alnMode = AlnMode.GotohBi;
+
+    public enum NgramMode {unigram, bigram};
+    public static NgramMode nGramMode = NgramMode.bigram;
+
+    public static boolean trainScores = false;
 
     public void setBigramDef(Double bigramDef) {
         this.bigramDef = bigramDef;
