@@ -1,10 +1,10 @@
 import algorithms.CountNgrams;
 import algorithms.GotohBigram;
-import container.NgramCount;
 import container.WordDatabase;
 import io.AlignmentWriter;
 import io.ScoreReader;
 import io.WordListReader;
+import processing.CreateWordPairs;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class Align_Main {
         for (int i = 0; i < data.size()-1; i++){
             GotohBigram gotohBi = new GotohBigram(30, 30, alg, data.get(i), data.get(i+1), writer);
             CreateWordPairs pairs = new CreateWordPairs(gotohBi);
-            pairs.createPairs(data.get(i), data.get(i+1));
+            pairs.createSameMeaningPairs(data.get(i), data.get(i+1));
         }
 
 

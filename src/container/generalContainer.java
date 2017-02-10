@@ -10,8 +10,8 @@ public class generalContainer {
     public static Double gapExtend = -1.;
     public enum Dimension {TWO, THREE, FOUR}
     //public static Dimension dim = Dimension.TWO;
-    enum AlnMode{NWA, SWA, NWAbi, GotohBi}
-    static AlnMode alnMode = AlnMode.GotohBi;
+    public enum AlnMode{NWA, SWA, NWAbi, GotohBi}
+    public static AlnMode alnMode = AlnMode.GotohBi;
 
     public enum NgramMode {unigram, bigram};
     public static NgramMode nGramMode = NgramMode.bigram;
