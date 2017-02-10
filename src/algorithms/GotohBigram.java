@@ -122,7 +122,7 @@ public class GotohBigram {
         for(int i = 1; i < seq1.length(); i++){
             match[i][0] = -100000.;
             insert[i][0] = -100000.;
-            //TODO: calc actual scores!!!
+
             if (i > 1)
                 delete[i][0] = delete[i-1][0] + algebra.getScore(seq1.substring(i-1, i+1), "--");
             else
@@ -132,7 +132,7 @@ public class GotohBigram {
         for (int j = 1; j < seq2.length(); j++){
             match[0][j] = -100000.;
             delete[0][j] = -100000.;
-            //TODO: calc actual scores!!!
+            
             if (j > 1)
                 insert[0][j] = insert[0][j-1] + algebra.getScore("--", seq2.substring(j-1, j+1));
             else
