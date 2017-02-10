@@ -1,26 +1,32 @@
-import java.util.ArrayList;
+package algorithms;
+
 import container.generalContainer;
+
+import java.util.ArrayList;
+
 /**
  * Created by nancy on 01.11.16.
  */
-public class NeedlemanWunsch {
+public class NWUnigram {
 
-    private AlignmentTable table;
+    private container.AlignmentTable table;
     private String[] seqs;
-    private container.Algebra algebra;
+    private container.SimpleScoreAlgebra algebra;
     private generalContainer.Dimension dim;
 
-    public NeedlemanWunsch(String[] seqs, container.Algebra algebra, generalContainer.Dimension dim){
+    //TODO backtracking for four sequences!!!
+
+    public NWUnigram(String[] seqs, container.SimpleScoreAlgebra algebra, generalContainer.Dimension dim){
         this.dim = dim;
         switch (this.dim){
             case TWO:
-                this.table = new AlignmentTable(seqs[0].length(), seqs[1].length());
+                this.table = new container.AlignmentTable(seqs[0].length(), seqs[1].length());
                 break;
             case THREE:
-                this.table = new AlignmentTable(seqs[0].length(), seqs[1].length(), seqs[2].length());
+                this.table = new container.AlignmentTable(seqs[0].length(), seqs[1].length(), seqs[2].length());
                 break;
             case FOUR:
-                this.table = new AlignmentTable(seqs[0].length(), seqs[1].length(), seqs[2].length(), seqs[3].length());
+                this.table = new container.AlignmentTable(seqs[0].length(), seqs[1].length(), seqs[2].length(), seqs[3].length());
                 break;
         }
         this.seqs = seqs;
@@ -77,22 +83,22 @@ public class NeedlemanWunsch {
             case TWO:
                 table.setScore(0, 0, 0.);
                 for (int i = 1; i < table.getX(); i++) {
-                    table.setScore(i, 0, generalContainer.gapOpen * i);
+                    table.setScore(i, 0, algebra.gapOpen * i);
                 }
                 for (int j = 1; j < table.getY(); j++) {
-                    table.setScore(0, j, generalContainer.gapOpen * j);
+                    table.setScore(0, j, algebra.gapOpen * j);
                 }
                 break;
             case THREE:
                 table.setScore(0, 0, 0, 0.);
                 for (int i = 1; i < table.getX(); i++) {
-                    table.setScore(i, 0, 0, generalContainer.gapOpen * i * 2);
+                    table.setScore(i, 0, 0, algebra.gapOpen * i * 2);
                 }
                 for (int j = 1; j < table.getY(); j++) {
-                    table.setScore(0, j, 0, generalContainer.gapOpen * j * 2);
+                    table.setScore(0, j, 0, algebra.gapOpen * j * 2);
                 }
                 for (int k = 1; k < table.getZ(); k++) {
-                    table.setScore(0, 0, k, generalContainer.gapOpen * k * 2);
+                    table.setScore(0, 0, k, algebra.gapOpen * k * 2);
                 }
                 for (int i = 1; i < table.getX(); i++){
                     for (int j = 1; j < table.getY(); j++){
@@ -126,16 +132,16 @@ public class NeedlemanWunsch {
             case FOUR:
                 table.setScore(0, 0, 0, 0, 0.);
                 for (int i = 1; i < table.getX(); i++) {
-                    table.setScore(i, 0, 0, 0, generalContainer.gapOpen * i * 3);
+                    table.setScore(i, 0, 0, 0, algebra.gapOpen * i * 3);
                 }
                 for (int j = 1; j < table.getY(); j++){
-                    table.setScore(0, j, 0, 0, generalContainer.gapOpen * j * 3);
+                    table.setScore(0, j, 0, 0, algebra.gapOpen * j * 3);
                 }
                 for (int k = 1; k < table.getZ(); k++){
-                    table.setScore(0, 0, k, 0, generalContainer.gapOpen * k * 3);
+                    table.setScore(0, 0, k, 0, algebra.gapOpen * k * 3);
                 }
                 for (int l = 1; l < table.getA(); l++){
-                    table.setScore(0, 0, 0, l, generalContainer.gapOpen * l * 3);
+                    table.setScore(0, 0, 0, l, algebra.gapOpen * l * 3);
                 }
 
                 for (int i = 1; i < table.getX(); i++){
@@ -294,8 +300,8 @@ public class NeedlemanWunsch {
                         maxList.clear();
                         maxList.add(table.getEntry(i-1, j-1) + algebra.getScore(seqs[0].substring(i-1, i),
                                 seqs[1].substring(j-1,j))); //Match
-                        maxList.add(table.getEntry(i-1, j) + generalContainer.gapOpen); //Insertion
-                        maxList.add(table.getEntry(i, j-1) + generalContainer.gapOpen); //Deletion
+                        maxList.add(table.getEntry(i-1, j) + algebra.gapOpen); //Insertion
+                        maxList.add(table.getEntry(i, j-1) + algebra.gapOpen); //Deletion
                         table.setScore(i, j, max(maxList));
                     }
                 }
@@ -418,7 +424,7 @@ public class NeedlemanWunsch {
                             alnSeq2.add(seqs[1].substring(j - 1, j));
                             i = i - 1;
                             j = j - 1;
-                        } else if (table.getEntry(i - 1, j) + generalContainer.gapOpen == table.getEntry(i, j)) {
+                        } else if (table.getEntry(i - 1, j) + algebra.gapOpen == table.getEntry(i, j)) {
                             alnSeq1.add(seqs[0].substring(i - 1, i));
                             alnSeq2.add("-");
                             i = i - 1;
@@ -515,7 +521,7 @@ public class NeedlemanWunsch {
                                 j = j - 1;
                             }
                         } else if (i > 0) {
-                            if (table.getEntry(i - 1, j, k) + 2 * generalContainer.gapOpen == table.getEntry(i, j, k)) {
+                            if (table.getEntry(i - 1, j, k) + 2 * algebra.gapOpen == table.getEntry(i, j, k)) {
                                 alnSeq1.add(seqs[0].substring(i - 1, i));
                                 alnSeq2.add("-");
                                 alnSeq3.add("-");

@@ -1,3 +1,5 @@
+package container;
+
 import container.generalContainer;
 
 /**
@@ -9,17 +11,17 @@ public class AlignmentTable {
     private double[][][][] table4;
     container.generalContainer.Dimension dim;
 
-    AlignmentTable(int seq1length, int seq2length) {
+    public AlignmentTable(int seq1length, int seq2length) {
         table2 = new double[seq1length + 1][seq2length + 1];
         dim = generalContainer.Dimension.TWO;
     }
 
-    AlignmentTable(int seq1length, int seq2length, int seq3length) {
+    public AlignmentTable(int seq1length, int seq2length, int seq3length) {
         table3 = new double[seq1length + 1][seq2length + 1][seq3length + 1];
         this.dim = generalContainer.Dimension.THREE;
     }
 
-    AlignmentTable(int seq1length, int seq2length, int seq3length, int seq4length) {
+    public AlignmentTable(int seq1length, int seq2length, int seq3length, int seq4length) {
         table4 = new double[seq1length + 1][seq2length + 1][seq3length + 1][seq4length + 1];
         this.dim = generalContainer.Dimension.FOUR;
     }

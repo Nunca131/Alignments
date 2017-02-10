@@ -55,7 +55,7 @@ public class ScoreReader {
 
                 //bigram case
                 else if (lineSplit.length == 7)
-                alg.fill(lineSplit[2] + lineSplit[3], lineSplit[4] + lineSplit[5],
+                    alg.fill(lineSplit[2] + lineSplit[3], lineSplit[4] + lineSplit[5],
                         Double.parseDouble(lineSplit[6]));
 
                 else
